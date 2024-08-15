@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models.address import Address
 from .models.education import Education
 from .models.employee import Employee
+from .models.favorite import FavoriteEmployee
 
 
 @admin.register(Address)
@@ -17,4 +18,9 @@ class EducationAdmin(admin.ModelAdmin):
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(FavoriteEmployee)
+class FavoriteEAdmin(admin.ModelAdmin):
     pass
