@@ -7,3 +7,6 @@ class Education(models.Model):
     university = models.CharField(_("Университет"), max_length=127)
     beginning = models.DateField(_("Начало"), null=True, blank=True)
     graduation = models.DateField(_("Выпуск"), null=True, blank=True)
+
+    def __str__(self):
+        return self.university
