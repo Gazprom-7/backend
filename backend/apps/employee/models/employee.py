@@ -37,7 +37,7 @@ class Employee(models.Model):
         null=True,
         blank=True,
         upload_to="images",
-        default="default.png",
+        default="default.jpg",
     )
     hobby = models.CharField(_("Хобби"), max_length=127, null=True, blank=True)
     interest = models.CharField(
