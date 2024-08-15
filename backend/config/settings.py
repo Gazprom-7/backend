@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     # local
     'apps.employee',
+    'apps.team',
 
     # 3rd party
     'rest_framework',
