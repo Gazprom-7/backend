@@ -4,6 +4,8 @@ from .models.address import Address
 from .models.education import Education
 from .models.employee import Employee
 from .models.favorite import FavoriteEmployee
+from .models.interest import Interest
+from .models.skills import Skill
 
 
 @admin.register(Address)
@@ -23,4 +25,14 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 @admin.register(FavoriteEmployee)
 class FavoriteEAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Skill)
+class SkillAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Interest)
+class InterestAdmin(admin.ModelAdmin):
     pass
