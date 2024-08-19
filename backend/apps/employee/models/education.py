@@ -3,12 +3,11 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Education(models.Model):
-    type = models.CharField(_("Тип образования"), max_length=31)
+    degree = models.CharField(_("Уровень образования"), max_length=127)
     organization = models.CharField(_("Учебное заведение"), max_length=127)
-    beginning = models.DateField(_("Начало учебы"), null=True, blank=True)
-    graduation = models.DateField(_("Выпуск"), null=True, blank=True)
+    year = models.IntegerField(_("Год"), null=True, blank=True)
     additional = models.BooleanField(
-        _("Дополнительное образование"), null=True, blank=True
+        _("Дополнительное образование"), null=True, blank=True, default=False
     )
 
     def __str__(self):

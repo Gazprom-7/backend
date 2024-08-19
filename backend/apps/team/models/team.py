@@ -21,6 +21,12 @@ class Team(models.Model):
         related_name="teams_projects",
         verbose_name=_("Проекты"),
     )
+    member = models.ManyToManyField(
+        Employee,
+        related_name="teams_member",
+        verbose_name=_("Участники команды"),
+        blank=True,
+    )
 
     def __str__(self):
         return f"Название команды: {self.name}"

@@ -1,5 +1,5 @@
 from api.v1.team.serializers.projects import EmployeeProjectSerializer
-from api.v1.team.serializers.teams import EmployeeTeamSerializer
+from api.v1.team.serializers.teams import EmployeeTeamWithOutLeaderSerializer
 from apps.employee.models.education import Education
 from apps.employee.models.employee import Employee
 from apps.employee.models.favorite import FavoriteEmployee
@@ -11,23 +11,22 @@ from rest_framework import serializers
 class SkillsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
-        fields = ("id", "name")
+        fields = ("core", "language")
 
 
 class InterestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interest
-        fields = ("id", "name")
+        fields = ("name",)
 
 
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Education
         fields = (
-            "type",
+            "degree",
             "organization",
-            "beginning",
-            "graduation",
+            "year",
             "additional",
         )
 
@@ -48,12 +47,11 @@ class SubordinatesSerializer(serializers.ModelSerializer):
         )
 
     def get_subordinates(self, obj):
-        print(self.context)
         # Get current depth from context and increase it
         current_depth = self.context.get("depth", 1)
 
         # Define maximum depth
-        max_depth = 3
+        max_depth = 2
 
         if current_depth >= max_depth:
             return []  # Return empty list if max depth is reached
@@ -88,6 +86,16 @@ class LeaderSerializer(serializers.ModelSerializer):
         fields = ("id", "firstname", "lastname", "image")
 
 
+class LeaderWithOutImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = (
+            "id",
+            "firstname",
+            "lastname",
+        )
+
+
 class FavoriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source="subscriber.id")
     firstname = serializers.CharField(source="subscriber.firstname")
@@ -113,6 +121,7 @@ class EmployeeListSerializer(serializers.ModelSerializer):
         many=True,
     )
     address = serializers.CharField(source="address.full_address")
+    department = serializers.SerializerMethodField()
 
     class Meta:
         model = Employee
@@ -127,50 +136,86 @@ class EmployeeListSerializer(serializers.ModelSerializer):
             "subordinates",
         )
 
+    def get_department(self, obj):
+        return None
+
 
 class EmployeeDetailSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="firstname")
     skills = SkillsSerializer(many=True)
     interest = InterestSerializer(many=True)
-    address = serializers.CharField(source="address.full_address")
-    leadership = LeaderSerializer()
+    city = serializers.CharField(source="address.full_address")
+    lead = serializers.SerializerMethodField()
     education = EducationSerializer(many=True)
-    teams = EmployeeTeamSerializer(many=True)
+    teams = EmployeeTeamWithOutLeaderSerializer(many=True)
     projects = EmployeeProjectSerializer(many=True)
     favorites = FavoriteSerializer(many=True)
-    deputy = MemberSerializer()
+    status = serializers.SerializerMethodField()
+    contact = serializers.SerializerMethodField()
+    work_format = serializers.CharField(source="format_work")
+    achievements = serializers.CharField(source="success")
+    about = serializers.CharField(source="biography")
 
     class Meta:
         model = Employee
         fields = (
             "id",
-            "firstname",
+            "name",
             "lastname",
             "image",
             "position",
             "staff",
-            "availability",
-            "absence",
-            "deputy",
-            "format_work",
-            "dey_week",
+            "status",
+            "work_format",
             "work_time",
-            "email",
-            "telephone",
-            "telephone_work",
-            "default_telephone",
-            "telegram",
-            "address",
-            "leadership",
-            "interest",
-            "skills",
-            "biography",
-            "hobby",
-            "success",
-            "favorites",
-            "education",
+            "city",
+            "contact",
+            "lead",
             "teams",
             "projects",
+            "education",
+            "interest",
+            "skills",
+            "about",
+            "hobby",
+            "achievements",
+            "favorites",
         )
+
+    def get_contact(self, obj):
+        return {
+            "email": obj.email,
+            "telephone": obj.telephone,
+            "telephone_work": obj.telephone_work,
+            "telegram": obj.telegram,
+        }
+
+    def get_status(self, obj):
+        if obj.deputy is None:
+            return {
+                "description": obj.availability,
+                "date": obj.absence,
+                "replacement": None,
+            }
+
+        return {
+            "description": obj.availability,
+            "date": obj.absence,
+            "replacement": {
+                "id": obj.deputy.id,
+                "name": obj.deputy.firstname,
+                "lastname": obj.deputy.lastname,
+            },
+        }
+
+    def get_lead(self, obj):
+        if obj.leadership is not None:
+            return {
+                "id": obj.leadership.id,
+                "name": obj.leadership.firstname,
+                "lastname": obj.leadership.lastname,
+            }
+        return None
 
 
 class UpdateEmployeeSerializer(serializers.ModelSerializer):
@@ -192,3 +237,7 @@ class UpdateEmployeeSerializer(serializers.ModelSerializer):
         )
         instance.save()
         return super().update(instance, validated_data)
+
+
+class AddEmployeeSerializer(serializers.Serializer):
+    member = serializers.IntegerField()

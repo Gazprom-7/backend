@@ -3,7 +3,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Skill(models.Model):
-    name = models.CharField(_("Название навыка"), max_length=127)
+    core = models.CharField(_("Основное навык"), max_length=127)
+    language = models.CharField(_("Язык программирования"), max_length=127)
 
     def __str__(self):
-        return self.name
+        return self.core

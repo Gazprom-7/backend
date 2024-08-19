@@ -11,6 +11,13 @@ User = get_user_model()
 
 
 class Employee(models.Model):
+    DEPARTMENT = (
+        ("Разработка", "Разработка"),
+        ("Архитектура", "Архитектура"),
+        ("ИБ", "ИБ"),
+        ("Аналитика", "Аналитика"),
+        ("Инфраструктура", "Инфраструктура"),
+    )
     firstname = models.CharField(_("Имя"), max_length=31)
     lastname = models.CharField(_("Фамилия"), max_length=31)
     login = models.CharField(_("Логин"), max_length=127)
@@ -67,7 +74,7 @@ class Employee(models.Model):
     )
     position = models.CharField(_("Должность"), max_length=127)
     department = models.CharField(
-        _("Отдел"), max_length=127, null=True, blank=True
+        _("Отдел"), max_length=127, null=True, blank=True, choices=DEPARTMENT
     )
     format_work = models.CharField(_("Формат работы"), max_length=127)
     availability = models.CharField(_("Доступность"), max_length=127)
