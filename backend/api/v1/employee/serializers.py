@@ -117,21 +117,22 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class EmployeeListSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="firstname")
     subordinates = SubordinatesSerializer(
         many=True,
     )
-    address = serializers.CharField(source="address.full_address")
+    city = serializers.CharField(source="address.full_address")
     department = serializers.SerializerMethodField()
 
     class Meta:
         model = Employee
         fields = (
             "id",
-            "firstname",
+            "name",
             "lastname",
             "image",
             "position",
-            "address",
+            "city",
             "department",
             "subordinates",
         )
