@@ -12,8 +12,7 @@
 
 - django
 - djangorestframework
-- djangorestframework
-- simplejwt
+- djangorestframework-simplejwt
 - pillow
 - drf-spectacular
 
